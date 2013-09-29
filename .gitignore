@@ -1,0 +1,6 @@
+# IntelliJ IDE files
+.idea
+*.iml
+
+# Compiled Erlang files
+*.beam
