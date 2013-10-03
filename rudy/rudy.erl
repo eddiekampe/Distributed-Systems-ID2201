@@ -13,9 +13,7 @@ start(Number, Port) ->
 
 
 % Stop Rudy
-stop() ->
-
-  rudy ! {stop}.
+stop() -> rudy ! {stop}.
 
 
 % Initialize. Setup server pool with Number workers listening to Port

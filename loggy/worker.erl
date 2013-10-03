@@ -20,11 +20,8 @@ init(Name, Log, Seed, Sleep, Jitter) ->
 
   random:seed(Seed, Seed, Seed),
   receive
-    {peers, Peers} ->
-      Time = 0,
-      loop(Name, Log, Peers, Sleep, Jitter, Time);
-    stop ->
-      ok
+    {peers, Peers} -> loop(Name, Log, Peers, Sleep, Jitter, 0);
+    stop -> ok
   end.
 
 
@@ -46,7 +43,6 @@ loop(Name, Log, Peers, Sleep, Jitter, WorkerTime) ->
       loop(Name, Log, Peers, Sleep, Jitter, Time);
 
     stop -> ok;
-
     Error -> Log ! {log, Name, time, {error, Error}}
 
   after Wait ->

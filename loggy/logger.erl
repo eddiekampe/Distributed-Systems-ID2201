@@ -22,11 +22,11 @@ init(Nodes) ->
 
   NodeList = [{Node, 0} || Node <- Nodes],
   io:format("~n[Logger] Logging nodes: ~w~n~n", [NodeList]),
-  loop(NodeList, [], 0).
+  loop(NodeList, []).
 
 
 % Loop, received messages
-loop(NodeList, Queue, Max) ->
+loop(NodeList, Queue) ->
 
   receive
 
@@ -42,8 +42,6 @@ loop(NodeList, Queue, Max) ->
         end, inf, UpdatedNodeList
       ),
 
-      MaxQueueLength = max(length(UpdatedQueue), Max),
-
       {SafeToLog, RemainingQueue} = lists:splitwith(
         fun({_Node, Clock, _Message}) ->
           Clock < LowestClock
@@ -51,9 +49,9 @@ loop(NodeList, Queue, Max) ->
       ),
 
       lists:foreach(fun(LogEntry) -> log(LogEntry) end, SafeToLog),
-      loop(UpdatedNodeList, RemainingQueue, MaxQueueLength);
+      loop(UpdatedNodeList, RemainingQueue);
 
-    stop -> io:format("QueueLength: ~w~n ", [Max])
+    stop -> ok
 
   end.
 

@@ -33,9 +33,8 @@ request(Host, Port) ->
   gen_tcp:send(Server, http:get("foo")),
 
   Recv = gen_tcp:recv(Server, 0),
+
   case Recv of
-    {ok, _} ->
-      ok;
-    {error, _Error} ->
-      error
+    {ok, _} -> ok;
+    {error, _Error} -> error
   end.
