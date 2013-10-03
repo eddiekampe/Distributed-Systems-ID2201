@@ -4,3 +4,6 @@
 
 # Compiled Erlang files
 *.beam
+
+# Latex template
+/reports/latex
