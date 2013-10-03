@@ -30,10 +30,10 @@ loop(NodeList, Queue, Max) ->
 
   receive
 
-    {log, Node, Time, Message} ->
+    {log, Node, TimeStamp, Message} ->
 
-      UpdatedQueue = update_queue(Queue, {Node, Time, Message}),
-      UpdatedNodeList = lists:keyreplace(Node, 1, NodeList, {Node, Time}),
+      UpdatedQueue = update_queue(Queue, {Node, TimeStamp, Message}),
+      UpdatedNodeList = lists:keyreplace(Node, 1, NodeList, {Node, TimeStamp}),
 
       % Find the time of the worker with lowest clock
       LowestClock = lists:foldl(
@@ -44,14 +44,14 @@ loop(NodeList, Queue, Max) ->
 
       MaxQueueLength = max(length(UpdatedQueue), Max),
 
-      {SafeToLog, SortedQueue} = lists:splitwith(
+      {SafeToLog, RemainingQueue} = lists:splitwith(
         fun({_Node, Clock, _Message}) ->
           Clock < LowestClock
         end, UpdatedQueue
       ),
 
       lists:foreach(fun(LogEntry) -> log(LogEntry) end, SafeToLog),
-      loop(UpdatedNodeList, SortedQueue, MaxQueueLength);
+      loop(UpdatedNodeList, RemainingQueue, MaxQueueLength);
 
     stop -> io:format("QueueLength: ~w~n ", [Max])
 
