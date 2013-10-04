@@ -4,11 +4,15 @@
 %% API
 -export([bench/3, request/2]).
 
-% Benchmark Host running @ Port with Number requests
-bench(Host, Port, NUmber) ->
+%
+%% This benchmark uses synchronous requests from one process
+%
+
+% Benchmark Host running @ Port with NumberOfRequests
+bench(Host, Port, NumberOfRequests) ->
 
   Start = now(),
-  run(NUmber, Host, Port),
+  run(NumberOfRequests, Host, Port),
   Finish = now(),
   timer:now_diff(Finish, Start).
 
