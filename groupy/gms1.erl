@@ -8,6 +8,7 @@
 
 % Start??
 start(Id) ->
+
   Self = self(),
   {ok, spawn_link(fun() -> init(Id, Self) end)}.
 
@@ -18,6 +19,7 @@ init(Id, Master) -> leader(Id, Master, [], [Master]).
 
 % Start Group
 start(Id, Group) ->
+
   Self = self(),
   {ok, spawn_link(fun() -> init(Id, Group, Self) end)}.
 
@@ -37,8 +39,7 @@ init(Id, Group, Master) ->
       Master ! {view, NewGroup},
       slave(Id, Master, Leader, Slaves, NewGroup);
 
-    Error ->
-      io:format("[GMS-~w] Got wierd message: ~w~n", [Id, Error])
+    Error -> io:format("[GMS-~w] Got wierd message: ~w~n", [Id, Error])
   end.
 
 
@@ -69,7 +70,6 @@ slave(Id, Master, Leader, Slaves, Group) ->
       slave(Id, Master, Leader, UpdatedSlaves, UpdatedGroup);
 
     stop -> ok;
-
     Error -> io:format("[GMS-~w] Slave, received strange message: ~w~n", [Id, Error])
     
   end.
@@ -100,7 +100,6 @@ leader(Id, Master, Slaves, Group) ->
       leader(Id, Master, UpdatedSlaves, UpdatedGroup);
 
     stop -> ok;
-
     Error -> io:format("[GMS-~w] Leader, received strange message: ~w~n", [Id, Error])
 
   end.
