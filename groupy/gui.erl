@@ -30,9 +30,8 @@ make_window(Title) ->
   Server = wx:new(),
   Frame = wxFrame:new(Server, -1, Title, [{size, {?WIDTH, ?HEIGHT}}]),
   wxFrame:setBackgroundColour(Frame, ?wxBLACK),
-  wxFrame:show(Frame),
-
   Window = wxWindow:new(Frame, ?wxID_ANY),
+  wxFrame:show(Frame),
   wxWindow:setBackgroundColour(Window, ?wxBLACK),
   wxWindow:show(Window),
 
