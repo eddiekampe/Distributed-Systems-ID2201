@@ -27,28 +27,27 @@ init_leader(Id, Random, Master) ->
 
 
 % Start Slave
-start(Id, Leader) ->
+start(Id, Grp) ->
 
   Self = self(),
-  {ok, spawn_link(fun() -> init_slave(Id, Leader, Self) end)}.
+  {ok, spawn_link(fun() -> init_slave(Id, Grp, Self) end)}.
 
 
 % Initialize Slave
-init_slave(Id, Leader, Master) ->
+init_slave(Id, Grp, Master) ->
 
-  erlang:monitor(process, Leader),
-
-  Self = self(),
   io:format("[GMS-~w] Asking group to join~n", [Id]),
-  Leader ! {join, Master, Self},
+  Self = self(),
+  Grp ! {join, Master, Self},
 
   receive
-    {view, [Lader|Slaves], Group} ->
+    {view, [Leader|Slaves], Group} ->
 
       io:format("[GMS-~w] Got view ~n", [Id]),
+      erlang:monitor(process, Leader),
 
       Master ! {view, Group},
-      slave(Id, Master, Lader, Slaves, Group);
+      slave(Id, Master, Leader, Slaves, Group);
 
     Error ->
       io:format("[GMS-~w] Got wierd message: ~w~n", [Id, Error])
@@ -86,7 +85,7 @@ slave(Id, Master, Leader, Slaves, Group) ->
       Master ! {view, UpdatedGroup},
       slave(Id, Master, Leader, UpdatedSlaves, UpdatedGroup);
 
-    {'DOWN', _Ref, process,  _Leader, _Reason} ->
+    {'DOWN', _Ref, process,  Leader, _Reason} ->
       election(Id, Master, Slaves, Group);
 
     stop -> ok;
