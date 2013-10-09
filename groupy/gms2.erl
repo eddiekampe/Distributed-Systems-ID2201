@@ -50,7 +50,7 @@ init_slave(Id, Grp, Master) ->
       slave(Id, Master, Leader, Slaves, Group);
 
     Error ->
-      io:format("[GMS-~w] Got wierd message: ~w~n", [Id, Error])
+      io:format("[GMS-~w] Got weird message: ~w~n", [Id, Error])
 
   after ?TIMEOUT ->
 
