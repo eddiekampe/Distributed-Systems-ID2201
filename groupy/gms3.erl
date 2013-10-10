@@ -130,7 +130,7 @@ leader(Id, Master, N, Slaves, Group) ->
 
 % Broadcast a message to given nodes
 broadcast(Id, Message, Nodes) ->
-  lists:foreach(fun(Node) -> Node ! Message end, Nodes).
+  lists:foreach(fun(Node) -> Node ! Message, crash(Id) end, Nodes).
 
 
 % Add a small chance to crash
