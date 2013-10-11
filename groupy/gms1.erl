@@ -6,7 +6,7 @@
 -export([start/1, start/2]).
 
 
-% Start??
+% Start
 start(Id) ->
 
   Self = self(),
