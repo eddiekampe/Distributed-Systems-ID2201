@@ -33,8 +33,8 @@ node(Id, Predecessor, Successor) ->
       node(Id, Predecessor, Successor);
 
     {status, Pred} ->
-      Succ = stabilize(Pred, Id, Successor),
-      node(Id, Predecessor, Succ);
+      UpdatedSuccessor = stabilize(Pred, Id, Successor),
+      node(Id, Predecessor, UpdatedSuccessor);
 
     Error ->
       io:format("[Node-~w] Received strange message: ~w~n", [Id, Error])
@@ -50,7 +50,7 @@ stabilize(Predecessor, Id, Successor) ->
 
     nil ->
       % Inform Predecessor about our existence
-      ok;
+      Spid ! {notify, Id};
 
     {Id, _} ->
       % It is pointing to us, don't do anything
@@ -73,6 +73,7 @@ stabilize(Predecessor, Id, Successor) ->
 %% return. When it knows the predecessor of its successor it can check if the ring
 %% is stable or if the successor needs to be notifies about its existence through
 %% a {notify, {Id, self()} message.
+
 %% Below is a skeleton for the stabilize/3 procedure. The Pred argument
 %% is ours successors current predecessor. If this i nil we should of course
 %% inform it about our existence. If it is pointing back to us we don’t have to

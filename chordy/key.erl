@@ -8,19 +8,21 @@
 -export([generate/0, between/3]).
 
 
-% Generate a random Id
-generate() -> random:uniform(?RANDOM).
+% Generate a random Id, ensure unique seed
+generate() ->
+  Time = now(),
+  random:seed(Time, Time, Time),
+  random:uniform(?RANDOM).
 
 
+% (Key, From, To). Check if From == To
+between(_Key, Value, Value) -> true;
 % Key within (From, To] ?
 between(Key, From, To) ->
 
   case Key of
 
     Key > From >= To ->
-      true;
-
-    From == To ->
       true;
 
     To > From ->
