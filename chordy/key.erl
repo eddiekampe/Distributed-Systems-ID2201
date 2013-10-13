@@ -10,6 +10,7 @@
 
 % Generate identifier
 generate() ->
+
   Time = now(),
   random:seed(Time, Time, Time),
   random:uniform(?RANDOM).
