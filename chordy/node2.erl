@@ -66,7 +66,7 @@ node(Id, Predecessor, Successor, Store) ->
       stabilize(Successor),
       node(Id, Predecessor, Successor, Store);
 
-  % Probe functionality
+    % Probe functionality
     probe ->
       create_probe(Id, Successor),
       node(Id, Predecessor, Successor, Store);
@@ -78,15 +78,15 @@ node(Id, Predecessor, Successor, Store) ->
     {probe, Ref, Nodes, T} ->
       forward_probe(Ref, T, Nodes, Id, Successor),
       node(Id, Predecessor, Successor, Store);
-  % /Probe
+    % /Probe
 
-    _Add={add, Key, Value, Qref, Client} ->
-      %io:format("[Node-~w] Add: ~w~n", [Id, Add]),
+    Add={add, Key, Value, Qref, Client} ->
+      io:format("[Node-~w] Add: ~w~n", [Id, Add]),
       Added = add(Key, Value, Qref, Client, Id, Predecessor, Successor, Store),
       node(Id, Predecessor, Successor, Added);
 
-    _Lookup={lookup, Key, Qref, Client} ->
-      %io:format("[Node-~w] Lookup: ~w~n", [Id, Lookup]),
+    Lookup={lookup, Key, Qref, Client} ->
+      io:format("[Node-~w] Lookup: ~w~n", [Id, Lookup]),
       lookup(Key, Qref, Client, Id, Predecessor, Successor, Store),
       node(Id, Predecessor, Successor, Store);
 
@@ -176,6 +176,7 @@ request(Peer, Predecessor) ->
   end.
 
 
+% Send a probe around the ring
 create_probe(Id, {_Skey, Spid}) ->
 
   Time = erlang:now(),
@@ -183,18 +184,21 @@ create_probe(Id, {_Skey, Spid}) ->
   io:format("~n[Node-~w] Probe started~n", [Id]).
 
 
+% Full circle achieved, measure time
 remove_probe(Id, Time, Nodes) ->
 
   TimeDiff = timer:now_diff(erlang:now(), Time),
   io:format("[Node-~w] Removing probe after ~w. Nodes visited: ~w~n~n", [Id, TimeDiff, Nodes]).
 
 
+% Forward the probe to our successor
 forward_probe(Ref, Time, Nodes, Id, {Skey, Spid}) ->
 
   Spid ! {probe, Ref, Nodes ++ [Id], Time},
   io:format("[Node-~w] Forwarding probe to Node~w~n", [Id, Skey]).
 
 
+% Add {Key, Value} to storage if we are responsible, otherwise delegate the job
 add(Key, Value, Qref, Client, Id, {Pkey, _Ppid}, {_Skey, Spid}, Store) ->
 
   case key:between(Key, Pkey, Id) of
@@ -208,6 +212,7 @@ add(Key, Value, Qref, Client, Id, {Pkey, _Ppid}, {_Skey, Spid}, Store) ->
   end.
 
 
+% Lookup Key in storage if we are responsible, otherwise delegate the job
 lookup(Key, Qref, Client, Id, {Pkey, _Ppid}, Successor, Store) ->
 
   case key:between(Key, Pkey, Id) of
@@ -221,6 +226,7 @@ lookup(Key, Qref, Client, Id, {Pkey, _Ppid}, Successor, Store) ->
   end.
 
 
+% Handover part of the storage to new Node
 handover(Store, Nkey, Npid) ->
 
   {Keep, Leave} = storage:split(Nkey, Store),

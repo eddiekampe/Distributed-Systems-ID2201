@@ -28,7 +28,6 @@ start_node1(N) ->
 % Each node with a data sets
 start_node2(N) ->
 
-
   StartNode = node2:start(1),
   PidList = [StartNode] ++ [node2:start(Id, StartNode) || Id <- lists:seq(1, N-1)],
 

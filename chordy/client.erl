@@ -8,26 +8,27 @@
 -export([start/2]).
 
 
+% Start Client
 start(Id, PidList) ->
   spawn(fun() -> init(Id, PidList) end).
 
 
+% Initialize
 init(Id, PidList) ->
 
   lists:foreach(
     fun(Pid) ->
-
       Pid ! {add, random:uniform(length(PidList)),
                   random:uniform(500),
                   make_ref(),
                   self()}
-
     end, PidList
   ),
 
   loop(Id, PidList).
 
 
+% Main loop
 loop(Id, PidList) ->
 
   timer:sleep(?SLEEP),

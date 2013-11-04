@@ -160,6 +160,7 @@ request(Peer, Predecessor) ->
   end.
 
 
+% Send a probe around the ring
 create_probe(Id, {_Skey, Spid}) ->
 
   Time = erlang:now(),
@@ -167,12 +168,14 @@ create_probe(Id, {_Skey, Spid}) ->
   io:format("~n[Node-~w] Probe started~n", [Id]).
 
 
+% Full circle achieved, measure time
 remove_probe(Id, Time, Nodes) ->
 
   TimeDiff = timer:now_diff(erlang:now(), Time),
   io:format("[Node-~w] Removing probe after ~w. Nodes visited: ~w~n~n", [Id, TimeDiff, Nodes]).
 
 
+% Forward the probe to our successor
 forward_probe(Ref, Time, Nodes, Id, {Skey, Spid}) ->
 
   Spid ! {probe, Ref, Nodes ++ [Id], Time},
